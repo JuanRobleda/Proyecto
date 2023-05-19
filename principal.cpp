@@ -1,0 +1,8 @@
+#include <iostream>
+#include "GimnasioF.cpp"
+using namespace std;
+
+int main()
+{
+    return 0;
+}
