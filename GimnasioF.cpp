@@ -38,6 +38,7 @@ contrasena contrasenas;
 int lastReg;
 
 void addCliente(cliente cli);
+void crearContra();
 
 void showCliente();
 int isCliente(char id[]);
@@ -46,7 +47,7 @@ void startCliente(int pos);
 cliente getCliente(int pos);
 void startContra();
 
-void updateStudent(cliente cli, int pos);
+void updateCliente(cliente cli, int pos);
 
 void deleteCliente(int pos);
 
@@ -156,3 +157,9 @@ void startContra()
     contrasenas.pinRecu = 0;
 }
 
+int menu()
+{
+    int op;
+
+    cout;
+}
