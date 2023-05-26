@@ -30,9 +30,6 @@ int lastReg;
 
 void addCliente(cliente cli);
 
-fecha calcDiaSig(int pos, fecha fechaCalc[], cliente cli[]);
-fecha calcVen(cliente cli[], int pos, fecha fechaCalc[]);
-
 void showCliente(int pos);
 int isCliente(char id[]);
 void showClientes();
@@ -45,8 +42,6 @@ void deleteCliente(int pos);
 
 int menu();
 void start();
-
-FILE *contraseñas;
 
 FILE *registroClientes;
 void saveClientes();
@@ -90,8 +85,6 @@ int isCliente(char id[])
     }
     return posicion;
 }
-
-
 
 void showClientes()
 {
@@ -146,66 +139,6 @@ void startCliente(int pos)
     clientes[pos].fechaVen.ano = 0;
 }
 
-fecha calcDiaSig(fecha fechaCalc, cliente cli)
-{
-    if((fechaCalc.ano == 0) && (fechaCalc.mes == 0) && (fechaCalc.dia == 0))
-    {
-        fechaCalc = cli.fechaIn;;
-    }
-    
-    fechaCalc.dia++;
-        if(fechaCalc.dia>31)
-        {
-            fechaCalc.dia = 1;
-            fechaCalc.mes++;
-            if(fechaCalc.mes>12)
-            {
-                fechaCalc.mes = 1;
-                fechaCalc.ano++;
-            }
-        }
-        else if(fechaCalc.dia==29 && fechaCalc.mes==2)
-        {
-            fechaCalc.dia=1;
-            fechaCalc.mes++;
-        }
-        else if(fechaCalc.dia==31 && (fechaCalc.mes==4 || fechaCalc.mes==6 || fechaCalc.mes==9 || fechaCalc.mes==11))
-        {
-            fechaCalc.dia = 1;
-            fechaCalc.mes++;
-        }
-    return fechaCalc;
-}
-
-fecha calcVen(cliente cli, fecha fechaCalc)
-{
-    int mem;
-    mem = cli.tipoMem;
-
-    switch (mem)
-    {
-        case 1:
-        for(int i; i < 30; i++)
-        {
-            calcDiaSig(fechaCalc, cli);
-        }
-        break;
-
-        case 2:
-        for (int i; i < 7; i++)
-        {
-            calcDiaSig(fechaCalc, cli);
-        }
-        break;
-
-        case 3:
-        calcDiaSig(fechaCalc, cli);
-        break;
-    }
-
-    return fechaCalc;
-}
-
 int menu()
 {
     int op;
@@ -235,10 +168,10 @@ int menu()
 void start()
 {
     int op, pos, resp;
-    fecha fechaCalc;
     char id[8];
     cliente cli;
     readClientes();
+
     do
     {
         system("cls||clean");
@@ -280,9 +213,38 @@ void start()
             cin >> cli.tipoMem;
             gotoxy(41, 12);
             scanf("%d/%d/%d", &cli.fechaIn.dia, &cli.fechaIn.mes, &cli.fechaIn.ano);
-            cli.fechaVen = calcVen(cli, fechaCalc);
-
             gotoxy(10, 13);
+
+            switch(cli.tipoMem)
+            {
+                case 1:
+                cli.fechaVen = cli.fechaIn;
+                cli.fechaVen.mes++;
+                break;
+
+                case 2:
+                cli.fechaVen = cli.fechaIn;
+                cli.fechaVen.dia+=7;
+                break;
+
+                case 3:
+                cli.fechaVen = cli.fechaIn;
+                cli.fechaVen.dia++;
+                break;
+            }
+            
+            if(cli.fechaVen.dia > 31) 
+            {
+                cli.fechaVen.dia = 1;
+                cli.fechaVen.mes++;
+            }
+            
+            if (cli.fechaVen.mes > 12) 
+            {
+            cli.fechaVen.mes = 1;
+            cli.fechaVen.ano++;
+            }
+
             addCliente(cli);
             system("pause");
             break;
@@ -313,8 +275,6 @@ void start()
             cout << "TIPO DE MEMBRESIA (1. MENSUAL 2. SEMANAL 3. DIARIO): ";
             gotoxy(41, 13);
             cout << "FECHA DE INGRESO (dd/MM/yyyy): ";
-            gotoxy(10, 14);
-
             gotoxy(14, 6);
             scanf(" %[^\n]", cli.ID);
             gotoxy(18, 7);
@@ -332,8 +292,37 @@ void start()
             gotoxy(41, 13);
             scanf("%d/%d/%d", &cli.fechaIn.dia, &cli.fechaIn.mes, &cli.fechaIn.ano);
 
-            updateCliente(cli, pos);
+            switch(cli.tipoMem)
+            {
+                case 1:
+                cli.fechaVen = cli.fechaIn;
+                cli.fechaVen.dia++;
+                break;
+
+                case 2:
+                cli.fechaVen = cli.fechaIn;
+                cli.fechaVen.dia+=7;
+                break;
+
+                case 3:
+                cli.fechaVen = cli.fechaIn;
+                cli.fechaVen.mes++;
+                break;
+            }
             
+            if(cli.fechaVen.dia > 31) 
+            {
+                cli.fechaVen.dia = 1;
+                cli.fechaVen.mes++;
+            }
+            
+            if (cli.fechaVen.mes > 12) 
+            {
+            cli.fechaVen.mes = 1;
+            cli.fechaVen.ano++;
+            }
+
+            updateCliente(cli, pos);
             cout << "Registro actualizado...\n";
             system("pause");
             break;
